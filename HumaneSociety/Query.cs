@@ -81,13 +81,27 @@ namespace HumaneSociety
 
         }
 
-        public static void GetClient(string userName, string password) //client
+        public static Client GetClient(string userName, string password) //client
         {
-
+            HumaneSocietyDataContext context = new HumaneSocietyDataContext();
+            var clients =
+                from c in context.Clients
+                where c.userName == userName && c.pass == password
+                select c;
+           
+            return clients;
+           
         }
 
         public static void GetUserAdoptionStatus(Client client) //var pendingAdoptions
         {
+            HumaneSocietyDataContext context = new HumaneSocietyDataContext();
+            var approval =
+                from c in context.ClientAnimalJunctions
+                where c.client == client.ID
+                select c.approvalStatus;
+
+
 
         }
 
@@ -109,6 +123,11 @@ namespace HumaneSociety
 
         public static void RetrieveEmployeeUser(string email, int employeeNumber) { } //Employee
 
+        public static void AddUsernameAndPassword(Employee employee) { } //void
+
+        public static void CheckEmployeeUserNameExist(String username) { } //bool doesExist
+
+        public static void GetStates() { }//var states of string states
 
 
 
