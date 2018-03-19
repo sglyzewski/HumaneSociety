@@ -45,7 +45,9 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Admin.cs" />
+    <Compile Include="Clientcs.cs" />
     <Compile Include="Customer.cs" />
+    <Compile Include="Employee.cs" />
     <Compile Include="PointOfEntry.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -68,6 +70,9 @@
   </ItemGroup>
   <ItemGroup>
     <Service Include="{3259AA49-8AA1-44D3-9025-A0B520596A8C}" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="HumaneSociety_DBCreation.sql" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
