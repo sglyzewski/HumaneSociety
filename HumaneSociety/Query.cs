@@ -15,9 +15,13 @@ namespace HumaneSociety
 
         }
 
-        public static void UpdateShot(string tyoe, Animal animal) //void
+        public static void UpdateShot(string typeOfShot, Animal animal) //void
         {
-
+            HumaneSocietyDataContext context = new HumaneSocietyDataContext();
+            var animalShotID = (from a in context.AnimalShotJunctions where a.Animal_ID == animal.ID select a.Shot_ID).First();
+            Shot shotResult = (from s in context.Shots where s.ID == animalShotID select s).First();
+            shotResult.name = typeOfShot;
+            context.SubmitChanges();
         }
 
         public static void EnterUpdate(Animal animal, Dictionary<int, string> updates) //void
@@ -25,9 +29,11 @@ namespace HumaneSociety
 
         }
 
-        public static void GetShots(Animal animal) //var shots ---List<string> shotInfo
+        public static List<AnimalShotJunction> GetShots(Animal animal) //var shots ---List<string> shotInfo
         {
-
+            HumaneSocietyDataContext context = new HumaneSocietyDataContext();
+            var shots = (from s in context.AnimalShotJunctions where s.Animal_ID == animal.ID select s).ToList();
+            return shots;
         }
 
         public static void RemoveAnimal(Animal animal) //void
@@ -84,29 +90,35 @@ namespace HumaneSociety
         public static Client GetClient(string userName, string password) //client
         {
             HumaneSocietyDataContext context = new HumaneSocietyDataContext();
-            var clients =
-                from c in context.Clients
+            var client =
+                (from c in context.Clients
                 where c.userName == userName && c.pass == password
-                select c;
+                select c).FirstOrDefault();
            
-            return clients;
+
+            return client;
            
         }
 
-        public static void GetUserAdoptionStatus(Client client) //var pendingAdoptions
+        public static List<string> GetUserAdoptionStatus(Client client) //var pendingAdoptions
         {
             HumaneSocietyDataContext context = new HumaneSocietyDataContext();
-            var approval =
-                from c in context.ClientAnimalJunctions
-                where c.client == client.ID
-                select c.approvalStatus;
+            var pendingAdoptions =
+                (from c in context.ClientAnimalJunctions
+                 where c.client == client.ID && c.approvalStatus != "approved"
+                 select c.approvalStatus).ToList();
 
-
-
+            return pendingAdoptions;
         }
 
-        public static void GetAnimalByID(int iD) //Animal or var animal
+        public static Animal GetAnimalByID(int iD) //Animal or var animal
         {
+            HumaneSocietyDataContext context = new HumaneSocietyDataContext();
+            var animal = (
+                from a in context.Animals
+                where a.ID == iD
+                select a).FirstOrDefault();
+            return animal;
 
         }
 
@@ -125,7 +137,13 @@ namespace HumaneSociety
 
         public static void AddUsernameAndPassword(Employee employee) { } //void
 
-        public static void CheckEmployeeUserNameExist(String username) { } //bool doesExist
+        public static bool CheckEmployeeUserNameExist(String username) //bool doesExist
+        {
+            HumaneSocietyDataContext context = new HumaneSocietyDataContext();
+            var usersWithUserName = context.Clients.Where(c => c.userName == username).Select(c => c).FirstOrDefault();
+            return (usersWithUserName == null) ? false : true;
+    
+        } 
 
         public static void GetStates() { }//var states of string states
 
