@@ -72,10 +72,7 @@ namespace HumaneSociety
 
         }
 
-        public static void GetPendingAdoptions() //var adoptions
-        {
-
-        }
+      
 
         public static void Adopt(Animal animal, Client client)
         {
@@ -100,14 +97,23 @@ namespace HumaneSociety
            
         }
 
-        public static List<string> GetUserAdoptionStatus(Client client) //var pendingAdoptions
+        public static List<ClientAnimalJunction> GetUserAdoptionStatus(Client client) //var pendingAdoptions
         {
             HumaneSocietyDataContext context = new HumaneSocietyDataContext();
             var pendingAdoptions =
                 (from c in context.ClientAnimalJunctions
-                 where c.client == client.ID && c.approvalStatus != "approved"
-                 select c.approvalStatus).ToList();
+                 where c.client == client.ID 
+                 select c).ToList();
 
+            return pendingAdoptions;
+        }
+
+        public static List<ClientAnimalJunction> GetPendingAdoptions()
+        {
+            HumaneSocietyDataContext context = new HumaneSocietyDataContext();
+            var pendingAdoptions = (from c in context.ClientAnimalJunctions
+                                     
+                                     select c).ToList();
             return pendingAdoptions;
         }
 
@@ -122,18 +128,44 @@ namespace HumaneSociety
 
         }
 
-        public static void RetrieveClients() { } // var clients
+        public static List<Client> RetrieveClients() {
 
-        public static void GetBreed() { } //System.Nullable<int> animal.breed
+            HumaneSocietyDataContext context = new HumaneSocietyDataContext();
+            var clients = (from c in context.Clients where (c.ID >= 0) select c).ToList();
+            return clients;
+        } // var clients
 
-        public static void GetDiet() { } //System.Nullable<int> animal.diet
+        public static int GetBreed(Animal animal) {
+            HumaneSocietyDataContext context = new HumaneSocietyDataContext();
+            var breed = (from b in context.Breeds where animal.breed == b.ID select b.ID).FirstOrDefault();
+            return breed;
+        } //System.Nullable<int> animal.breed 
 
-        public static void GetLocation() { } //System.Nullable<int> animal.location
+
+        public static int GetDiet(Animal animal) {
+            HumaneSocietyDataContext context = new HumaneSocietyDataContext();
+            var diet = (from d in context.DietPlans where animal.diet == d.ID select d.ID).FirstOrDefault();
+            return diet;
+        } //System.Nullable<int> animal.diet
+
+        public static int GetLocation(Animal animal) {
+            HumaneSocietyDataContext context = new HumaneSocietyDataContext();
+            var location = (from r in context.Rooms where animal.location == r.ID select r.ID).FirstOrDefault();
+            return location;
+        } //System.Nullable<int> animal.location
         public static void AddAnimal(Animal animal) { } //void
 
-        public static void EmployeeLogin(string username, string password) { } //Employee UserEmployee
+        public static Employee EmployeeLogin(string username, string password) {
+            HumaneSocietyDataContext context = new HumaneSocietyDataContext();
+            var employee = (from e in context.Employees where (e.userName == username) && e.pass==password select e).FirstOrDefault();
+            return employee;
+        } //Employee UserEmployee
 
-        public static void RetrieveEmployeeUser(string email, int employeeNumber) { } //Employee
+        public static Employee RetrieveEmployeeUser(string email, int employeeNumber) {
+            HumaneSocietyDataContext context = new HumaneSocietyDataContext();
+            var employee = (from e in context.Employees where (e.email == email) && e.employeeNumber == employeeNumber select e).FirstOrDefault();
+            return employee;
+        } //Employee
 
         public static void AddUsernameAndPassword(Employee employee) { } //void
 
@@ -145,7 +177,11 @@ namespace HumaneSociety
     
         } 
 
-        public static void GetStates() { }//var states of string states
+        public static List<USState> GetStates() {
+            HumaneSocietyDataContext context = new HumaneSocietyDataContext();
+            var states = (from s in context.USStates select s).ToList();
+            return states;
+        }//var states of string states
 
 
 
