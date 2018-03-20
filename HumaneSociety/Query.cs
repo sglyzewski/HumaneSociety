@@ -13,15 +13,18 @@ namespace HumaneSociety
         public static void UpdateAdoption(bool success, ClientAnimalJunction clientAnimalJunction) //void
         {
             HumaneSocietyDataContext context = new HumaneSocietyDataContext();
+            Animal animalAdopted = (from a in context.Animals where clientAnimalJunction.animal == a.ID select a).FirstOrDefault();
             
             if (success == true)
             {
                 clientAnimalJunction.approvalStatus = "approved";
+                animalAdopted.adoptionStatus = "adopted";
                 context.SubmitChanges();
             }
             if(success == false)
             {
                 clientAnimalJunction.approvalStatus = "rejected";
+               
                 context.SubmitChanges();
             }
         }
