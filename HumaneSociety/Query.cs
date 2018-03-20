@@ -19,14 +19,23 @@ namespace HumaneSociety
             {
                 clientAnimalJunction.approvalStatus = "approved";
                 animalAdopted.adoptionStatus = "adopted";
-                context.SubmitChanges();
+               
             }
-            if(success == false)
+            else
             {
                 clientAnimalJunction.approvalStatus = "rejected";
                
+              
+            }
+            try
+            {
                 context.SubmitChanges();
             }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+            }
+           
         }
 
         public static void UpdateShot(string typeOfShot, Animal animal) //void
