@@ -273,13 +273,66 @@ namespace HumaneSociety
             HumaneSocietyDataContext context = new HumaneSocietyDataContext();
             var animalInContext = (from a in context.Animals where a.ID == animal.ID select a).FirstOrDefault();
             context.Animals.DeleteOnSubmit(animalInContext);
-            context.SubmitChanges();
+            try
+            {
+                context.SubmitChanges();
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+            }
         }
 
+        public static int GetAddress(string streetAddress, int zipCode, int state)
+        {
+            HumaneSocietyDataContext context = new HumaneSocietyDataContext();
+
+            var address = (from u in context.UserAddresses where u.addessLine1 == streetAddress && u.zipcode == zipCode select u).FirstOrDefault();
+            if (address.ID >= 0)
+            {
+                return address.ID;
+            }
+            else {
+                UserAddress newAddress = new UserAddress();
+                newAddress.addessLine1 = streetAddress;
+                newAddress.zipcode = zipCode;
+                newAddress.USState.ID = state;
+                context.UserAddresses.InsertOnSubmit(newAddress);
+                try
+                {
+                    context.SubmitChanges();
+                }
+                catch (Exception e)
+                {
+                    Console.WriteLine(e);
+                }
+                return newAddress.ID;
+
+              }
+           
+        }
 
         //public static int CreateNewAddress(string streetAddress, int zipCode, int state) { }
         public static void AddNewClient(string firstName, string lastName, string username, string password, string email, string streetAddress, int zipCode, int state) //void
         {
+            HumaneSocietyDataContext context = new HumaneSocietyDataContext();
+
+            Client client = new Client();
+            client.firstName = firstName;
+            client.lastName = lastName;
+            client.userName = username;
+            client.pass = password;
+            client.userAddress = GetAddress(streetAddress, zipCode, state);
+            client.email = email;
+            context.Clients.InsertOnSubmit(client);
+            try
+            {
+                context.SubmitChanges();
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+            }
 
         }
 
@@ -456,14 +509,16 @@ namespace HumaneSociety
             return employee;
         } //Employee
 
-        public static void AddUsernameAndPassword(Employee employee) { } //void
+        public static void AddUsernameAndPassword(Employee employee) {
+            //HumaneSocietyDataContext context = new HumaneSocietyDataContext();
+            //employee.userName 
+        } //void
 
         public static bool CheckEmployeeUserNameExist(String username) //bool doesExist
         {
             HumaneSocietyDataContext context = new HumaneSocietyDataContext();
-            var usersWithUserName = context.Clients.Where(c => c.userName == username).Select(c => c).FirstOrDefault();
-            return (usersWithUserName == null) ? false : true;
-    
+            bool usersWithUserName = context.Employees.Any(e => e.userName == username);
+            return usersWithUserName;
         } 
 
         public static List<USState> GetStates() {
