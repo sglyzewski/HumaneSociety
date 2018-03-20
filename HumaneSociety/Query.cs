@@ -509,10 +509,21 @@ namespace HumaneSociety
             return employee;
         } //Employee
 
-        public static void AddUsernameAndPassword(Employee employee) {
-            //HumaneSocietyDataContext context = new HumaneSocietyDataContext();
-            //employee.userName 
-        } //void
+        public static void AddUsernameAndPassword(Employee employee)  //??????????
+        {
+            HumaneSocietyDataContext context = new HumaneSocietyDataContext();
+            employee.userName = employee.userName;
+            employee.pass = employee.pass;
+            try
+            {
+                context.SubmitChanges();
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+            }
+
+        }
 
         public static bool CheckEmployeeUserNameExist(String username) //bool doesExist
         {
