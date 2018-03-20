@@ -67,7 +67,6 @@ namespace HumaneSociety
                 Breed newBreed = new Breed();
                 newBreed.breed1 = breed;
                 context.Breeds.InsertOnSubmit(newBreed);
-
                 try
                 {
                     context.SubmitChanges();
@@ -268,7 +267,10 @@ namespace HumaneSociety
 
         public static void RemoveAnimal(Animal animal) //void
         {
-
+            HumaneSocietyDataContext context = new HumaneSocietyDataContext();
+            var animalInContext = (from a in context.Animals where a.ID == animal.ID select a).FirstOrDefault();
+            context.Animals.DeleteOnSubmit(animalInContext);
+            context.SubmitChanges();
         }
 
         public static void AddNewClient(string firstName, string lastName, string username, string password, string email, string streetAddress, int zipCode, int state) //void
@@ -306,6 +308,29 @@ namespace HumaneSociety
 
         public static void Adopt(Animal animal, Client client)
         {
+            HumaneSocietyDataContext context = new HumaneSocietyDataContext();
+            var junction = (from j in context.ClientAnimalJunctions where j.animal == animal.ID && j.client == client.ID select j).FirstOrDefault();
+            junction.approvalStatus = "pending";
+            var animalInContext = (from a in context.Animals where a.ID == animal.ID select a).FirstOrDefault();
+            animalInContext.adoptionStatus = "pending";
+            context.ClientAnimalJunctions.InsertOnSubmit(junction);
+            try
+            {
+                context.SubmitChanges();
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+            }
+            context.Animals.InsertOnSubmit(animalInContext);
+            try
+            {
+                context.SubmitChanges();
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+            }
 
         }
 
