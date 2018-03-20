@@ -58,9 +58,155 @@ namespace HumaneSociety
             return catagoryID;
         }
 
-        public static void EnterUpdate(Animal animal, Dictionary<int, string> updates) //void
+        public static int GetBreedKey(string breed)
         {
             HumaneSocietyDataContext context = new HumaneSocietyDataContext();
+            var breedID = (from c in context.Breeds where c.breed1 == breed select c.ID).FirstOrDefault();
+            if (breedID < 0)
+            {
+                Breed newBreed = new Breed();
+                newBreed.breed1 = breed;
+                context.Breeds.InsertOnSubmit(newBreed);
+
+                try
+                {
+                    context.SubmitChanges();
+                }
+                catch (Exception e)
+                {
+                    Console.WriteLine(e);
+                }
+                return newBreed.ID;
+            }
+            return breedID;
+        }
+        public static void UpdateSpecies(Animal animal, string update) {
+            HumaneSocietyDataContext context = new HumaneSocietyDataContext();
+            var catagoryID = GetCategoryKey(update);
+            var breed = (from b in context.Breeds where b.catagory == catagoryID select b).FirstOrDefault();
+            animal.breed = breed.ID;
+            context.Animals.InsertOnSubmit(animal);
+            context.SubmitChanges();
+        }
+
+        
+        public static void UpdateBreed(Animal animal, string update) {
+            HumaneSocietyDataContext context = new HumaneSocietyDataContext();
+            var breedID = GetBreedKey(update);
+            animal.breed = breedID;
+            context.Animals.InsertOnSubmit(animal);
+            context.SubmitChanges();
+
+        }
+
+
+        public static void UpdateName(Animal animal, string update) {
+            HumaneSocietyDataContext context = new HumaneSocietyDataContext();
+            var animalInContext = (from a in context.Animals where a.ID == animal.ID select a).FirstOrDefault();
+            animalInContext.name = update;
+            context.Animals.InsertOnSubmit(animalInContext);
+            try
+            {
+                context.SubmitChanges();
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+            }
+   
+        }
+        public static void UpdateAge(Animal animal, string update) {
+            HumaneSocietyDataContext context = new HumaneSocietyDataContext();
+            var animalInContext = (from a in context.Animals where a.ID == animal.ID select a).FirstOrDefault();
+            animalInContext.age = Int32.Parse(update);
+            context.Animals.InsertOnSubmit(animalInContext);
+            try
+            {
+                context.SubmitChanges();
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+            }
+        }
+        public static void UpdateDemeanor(Animal animal, string update) {
+            HumaneSocietyDataContext context = new HumaneSocietyDataContext();
+            var animalInContext = (from a in context.Animals where a.ID == animal.ID select a).FirstOrDefault();
+            animalInContext.demeanor = update;
+            context.Animals.InsertOnSubmit(animalInContext);
+            try
+            {
+                context.SubmitChanges();
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+            }
+        }
+        public static void UpdateKidFriendly(Animal animal, string update) {
+            HumaneSocietyDataContext context = new HumaneSocietyDataContext();
+            var animalInContext = (from a in context.Animals where a.ID == animal.ID select a).FirstOrDefault();
+            bool kidFriendly;
+            if (update.ToLower()=="yes")
+            {
+               kidFriendly = true;
+            }
+            else
+            {
+                kidFriendly = false;
+            }
+            animalInContext.kidFriendly = kidFriendly;
+            context.Animals.InsertOnSubmit(animalInContext);
+            try
+            {
+                context.SubmitChanges();
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+            }
+        }
+        public static void UpdatePetFriendly(Animal animal, string update) {
+            HumaneSocietyDataContext context = new HumaneSocietyDataContext();
+            var animalInContext = (from a in context.Animals where a.ID == animal.ID select a).FirstOrDefault();
+            bool petFriendly;
+            if (update.ToLower() == "yes")
+            {
+                petFriendly = true;
+            }
+            else
+            {
+                petFriendly = false;
+            }
+            animalInContext.petFriendly = petFriendly;
+            context.Animals.InsertOnSubmit(animalInContext);
+            try
+            {
+                context.SubmitChanges();
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+            }
+        }
+        public static void UpdateWeight(Animal animal, string update) {
+            HumaneSocietyDataContext context = new HumaneSocietyDataContext();
+            var animalInContext = (from a in context.Animals where a.ID == animal.ID select a).FirstOrDefault();
+            animalInContext.weight = Int32.Parse(update);
+            context.Animals.InsertOnSubmit(animalInContext);
+            try
+            {
+                context.SubmitChanges();
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+            }
+        }
+
+        public static void EnterUpdate(Animal animal, Dictionary<int, string> updates) //void
+        {
+           
             string species ="";
             updates.TryGetValue(1, out species);
             string breed ="";
@@ -80,16 +226,36 @@ namespace HumaneSociety
 
             if (species != "")
             {
-                var catagoryID = GetCategoryKey(species);
-                var animalBreed = (from b in context.Breeds where b.catagory == catagoryID select b.ID).FirstOrDefault();
-                if (animalBreed == null)
-                {
-                    
-                }
-                animal.breed = animalBreed;
-                context.SubmitChanges();
+                UpdateSpecies(animal, species);
             }
-
+            if (breed != "")
+            {
+                UpdateSpecies(animal, breed);
+            }
+            if(name !="")
+            {
+                UpdateName(animal, name);
+            }
+            if(age != "")
+            {
+                UpdateAge(animal, name);
+            }
+            if(demeanor != "")
+            {
+                UpdateDemeanor(animal, demeanor);
+            }
+            if(kidFriendly != "")
+            {
+                UpdateKidFriendly(animal, kidFriendly);
+            }
+            if (petFriendly != "")
+            {
+                UpdatePetFriendly(animal, petFriendly);
+            }
+            if (weight != "")
+            {
+                UpdateWeight(animal, weight);
+            }
 
         }
 
