@@ -280,26 +280,39 @@ namespace HumaneSociety
         public static void AddNewClient(string firstName, string lastName, string username, string password, string email, string streetAddress, int zipCode, int state) //void
         {
             Client client = new Client();
+            int address = GetClientAddressKey(streetAddress, zipCode, state);
             client.firstName = firstName;
             client.lastName = lastName;
             client.userName = username;
             client.pass = password;
             client.email = email;
-
+            client.userAddress = address;
             HumaneSocietyDataContext context = new HumaneSocietyDataContext();
-            UserAddress addClientZipCode = (from row in context.UserAddresses where row.ID == userAddressId select row).FirstOrDefault();
-            if (addClientZipCode == null)
+            context.Clients.InsertOnSubmit(client);
+            context.SubmitChanges();
+        }
+
+        public static int GetClientAddressKey(string streetAddress, int zipCode, object state)
+        {
+            HumaneSocietyDataContext context = new HumaneSocietyDataContext();
+            int addressNumber;
+            var clientAddress = from row in context.UserAddresses where row.addessLine1 == streetAddress && row.zipcode == zipCode && row.USState == state select row.ID;
+            if (clientAddress.ToList().Count > 0)
             {
-                addClientZipCode.zipcode = userAddressId;
-                context.SubmitChanges();
+                addressNumber = clientAddress.ToList()[0];
             }
-           USState addClientState = (from row in context.USStates where row.ID == userAddressId select row).FirstOrDefault();
-           if (addClientState == null)
-           {
-                addClientState. = client.userAddress;
+            else
+            {
+                UserAddress address = new UserAddress();
+                address.zipcode = zipCode;
+                address.addessLine1 = streetAddress;
+                address.USState = state;
+                context.UserAddresses.InsertOnSubmit(address);
                 context.SubmitChanges();
-           }
-          client.userAddress = userAddressId; //forign key which points to primary key
+                var addressKey = from row in context.UserAddresses where row.addessLine1 == streetAddress && row.zipcode == zipCode && row.USState == state select address.ID;
+                addressNumber = addressKey.ToList()[0];
+            }
+            return addressNumber;
         }
 
 
