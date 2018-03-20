@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.IO;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -592,11 +593,12 @@ namespace HumaneSociety
             return employee;
         } //Employee
 
-        public static void AddUsernameAndPassword(Employee employee)  //??????????
+        public static void AddUsernameAndPassword(Employee employee, string userName, string password)  //??????????
         {
             HumaneSocietyDataContext context = new HumaneSocietyDataContext();
-            employee.userName = employee.userName;
-            employee.pass = employee.pass;
+            var employeeRecord = (from e in context.Employees where e.ID == employee.ID select e).FirstOrDefault();
+            employeeRecord.userName = userName;
+            employeeRecord.pass = password;
             try
             {
                 context.SubmitChanges();
@@ -621,7 +623,71 @@ namespace HumaneSociety
             return states;
         }//var states of string states
 
+        public static List<string[]> ConvertCSVtoList(string filename)
+        {
+            HumaneSocietyDataContext context = new HumaneSocietyDataContext();
+            //https://docs.microsoft.com/en-us/dotnet/csharp/programming-guide/concepts/linq/how-to-compute-column-values-in-a-csv-text-file-linq
+            var stuffToAdd = File.ReadAllLines(filename);
+            //from line in stuffToAdd
+            //let elements = line.Split(',').Select(lines);
 
+            //int dataRowStart = 0;
+            List<string[]> data = new List<string[]>();
+            for(int i = 0; i<stuffToAdd.Length-1; i++)
+            {
+                string line = stuffToAdd[i];
+                string[] values = line.Split(',');
+                data.Add(values);
+            }
+
+            return data;
+                 
+        }
+
+        public static void ImportCSVToDB(string filename)
+        {
+            HumaneSocietyDataContext context = new HumaneSocietyDataContext();
+            //after each line is split into list of array of strings, the goal here 
+            //is to add the correct list item to the animal characteristic
+            List<string[]> data = ConvertCSVtoList(filename);
+            foreach (var line in data)
+            {
+                Animal animal = new Animal();
+                //animal.ID = Int32.Parse(line[0]);
+                animal.name = line[1];
+                animal.weight = Int32.Parse(line[3]);
+                animal.age = Int32.Parse(line[4]);
+                animal.demeanor = line[7];
+                if(line[8] == "1")
+                {
+                    animal.kidFriendly = true;
+                }
+                else
+                {
+                    animal.kidFriendly = false;
+                }
+                if (line[9] == "1")
+                {
+                    animal.petFriendly = true;
+                }
+                else
+                {
+                    animal.petFriendly = false;
+                }
+                animal.adoptionStatus = line[11];
+
+                context.Animals.InsertOnSubmit(animal);
+                try
+                {
+                    context.SubmitChanges();
+                }
+                catch (Exception e)
+                {
+                    Console.WriteLine(e);
+                }
+
+            }
+        }
 
 
     }
