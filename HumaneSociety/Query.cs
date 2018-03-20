@@ -84,7 +84,7 @@ namespace HumaneSociety
             var catagoryID = GetCategoryKey(update);
             var breed = (from b in context.Breeds where b.catagory == catagoryID select b).FirstOrDefault();
             animal.breed = breed.ID;
-            context.Animals.InsertOnSubmit(animal);
+            //context.Animals.InsertOnSubmit(animal);
             context.SubmitChanges();
         }
 
@@ -93,7 +93,7 @@ namespace HumaneSociety
             HumaneSocietyDataContext context = new HumaneSocietyDataContext();
             var breedID = GetBreedKey(update);
             animal.breed = breedID;
-            context.Animals.InsertOnSubmit(animal);
+            //context.Animals.InsertOnSubmit(animal);
             context.SubmitChanges();
 
         }
@@ -103,7 +103,7 @@ namespace HumaneSociety
             HumaneSocietyDataContext context = new HumaneSocietyDataContext();
             var animalInContext = (from a in context.Animals where a.ID == animal.ID select a).FirstOrDefault();
             animalInContext.name = update;
-            context.Animals.InsertOnSubmit(animalInContext);
+            //context.Animals.InsertOnSubmit(animalInContext);
             try
             {
                 context.SubmitChanges();
@@ -118,7 +118,7 @@ namespace HumaneSociety
             HumaneSocietyDataContext context = new HumaneSocietyDataContext();
             var animalInContext = (from a in context.Animals where a.ID == animal.ID select a).FirstOrDefault();
             animalInContext.age = Int32.Parse(update);
-            context.Animals.InsertOnSubmit(animalInContext);
+            //context.Animals.InsertOnSubmit(animalInContext);
             try
             {
                 context.SubmitChanges();
@@ -132,7 +132,7 @@ namespace HumaneSociety
             HumaneSocietyDataContext context = new HumaneSocietyDataContext();
             var animalInContext = (from a in context.Animals where a.ID == animal.ID select a).FirstOrDefault();
             animalInContext.demeanor = update;
-            context.Animals.InsertOnSubmit(animalInContext);
+            //context.Animals.InsertOnSubmit(animalInContext);
             try
             {
                 context.SubmitChanges();
@@ -155,7 +155,7 @@ namespace HumaneSociety
                 kidFriendly = false;
             }
             animalInContext.kidFriendly = kidFriendly;
-            context.Animals.InsertOnSubmit(animalInContext);
+            //context.Animals.InsertOnSubmit(animalInContext);
             try
             {
                 context.SubmitChanges();
@@ -178,7 +178,7 @@ namespace HumaneSociety
                 petFriendly = false;
             }
             animalInContext.petFriendly = petFriendly;
-            context.Animals.InsertOnSubmit(animalInContext);
+            //context.Animals.InsertOnSubmit(animalInContext);
             try
             {
                 context.SubmitChanges();
@@ -192,7 +192,7 @@ namespace HumaneSociety
             HumaneSocietyDataContext context = new HumaneSocietyDataContext();
             var animalInContext = (from a in context.Animals where a.ID == animal.ID select a).FirstOrDefault();
             animalInContext.weight = Int32.Parse(update);
-            context.Animals.InsertOnSubmit(animalInContext);
+            //context.Animals.InsertOnSubmit(animalInContext);
             try
             {
                 context.SubmitChanges();
@@ -273,10 +273,14 @@ namespace HumaneSociety
             context.SubmitChanges();
         }
 
+
+        //public static int CreateNewAddress(string streetAddress, int zipCode, int state) { }
         public static void AddNewClient(string firstName, string lastName, string username, string password, string email, string streetAddress, int zipCode, int state) //void
         {
 
         }
+
+
         public static void UpdateClient(Client client) //void
         {
 
