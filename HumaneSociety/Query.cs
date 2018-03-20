@@ -313,15 +313,31 @@ namespace HumaneSociety
         }
 
         //public static int CreateNewAddress(string streetAddress, int zipCode, int state) { }
+        //public static void AddNewClient(string firstName, string lastName, string username, string password, string email, string streetAddress, int zipCode, int state) //void
+        //{
+        //    HumaneSocietyDataContext context = new HumaneSocietyDataContext();
+
+        //    Client client = new Client();
+        //    Animal animalToBeRemoved = (from row in context.Animals where row.ID == animal.ID select row).FirstOrDefault();
+        //    if (animalToBeRemoved != null)
+        //    {
+        //        context.Animals.DeleteOnSubmit(animalToBeRemoved);
+        //        context.SubmitChanges();
+        //    }
+        //}
+
+        //public static int CreateNewAddress(string streetAddress, int zipCode, int state) { }
         public static void AddNewClient(string firstName, string lastName, string username, string password, string email, string streetAddress, int zipCode, int state) //void
         {
             HumaneSocietyDataContext context = new HumaneSocietyDataContext();
-
             Client client = new Client();
+            int address = GetClientAddressKey(streetAddress, zipCode, state);
+
             client.firstName = firstName;
             client.lastName = lastName;
             client.userName = username;
             client.pass = password;
+
             client.userAddress = GetAddress(streetAddress, zipCode, state);
             client.email = email;
             context.Clients.InsertOnSubmit(client);
@@ -333,38 +349,96 @@ namespace HumaneSociety
             {
                 Console.WriteLine(e);
             }
+        }
 
+
+        public static int GetClientAddressKey(string streetAddress, int zipCode, int state)
+        {
+            HumaneSocietyDataContext context = new HumaneSocietyDataContext();
+            var stateToUpdate = (from row in context.USStates where row.ID == state select row).FirstOrDefault();
+            if(stateToUpdate != null)
+            {
+
+            }
+            int addressNumber;
+            var clientAddress = from row in context.UserAddresses where row.addessLine1 == streetAddress && row.zipcode == zipCode && row.USState.ID == state select row.ID;
+            if (clientAddress.ToList().Count > 0)
+            {
+                addressNumber = clientAddress.ToList()[0];
+            }
+            else
+            {
+                UserAddress userAddress = new UserAddress();
+                userAddress.zipcode = zipCode;
+                userAddress.addessLine1 = streetAddress;
+                userAddress.USState.ID = state;
+                context.UserAddresses.InsertOnSubmit(userAddress);
+                context.SubmitChanges();
+                var addressKey = from row in context.UserAddresses where row.addessLine1 == streetAddress && row.zipcode == zipCode && row.USState.ID == state select userAddress.ID;
+                addressNumber = addressKey.ToList()[0];
+            }
+            return addressNumber;
         }
 
 
         public static void UpdateClient(Client client) //void
         {
+            
 
         }
 
         public static void UpdateUsername(Client client) //void
         {
+            HumaneSocietyDataContext context = new HumaneSocietyDataContext();
+            Client updateclientUsername = (from row in context.Clients where row.ID == client.ID select row).FirstOrDefault();
+            if (updateclientUsername != null)
+            {
+                updateclientUsername.userName = client.userName;
+                context.SubmitChanges();
+            }
 
         }
         public static void UpdateEmail(Client client) //void
         {
-
+            HumaneSocietyDataContext context = new HumaneSocietyDataContext();
+            Client updateClientEmail = (from row in context.Clients where row.ID == client.ID select row).FirstOrDefault();
+            if (updateClientEmail != null)
+            {
+                updateClientEmail.email = client.email;
+                context.SubmitChanges();
+            }
         }
         public static void UpdateAddress(Client client) //void
         {
-
+            HumaneSocietyDataContext context = new HumaneSocietyDataContext();
+            Client updateClientAddress = (from row in context.Clients where row.ID == client.ID select row).FirstOrDefault();
+            if (updateClientAddress != null)
+            {
+                updateClientAddress.userAddress = client.userAddress;
+                context.SubmitChanges();
+            }
         }
         public static void UpdateFirstName(Client client) //void
         {
-
+            HumaneSocietyDataContext context = new HumaneSocietyDataContext();
+            Client updateClientFirstName = (from row in context.Clients where row.ID == client.ID select row).FirstOrDefault();
+                if (updateClientFirstName != null)
+                {
+                    updateClientFirstName.firstName = client.firstName;
+                    context.SubmitChanges();
+                }
         }
 
         public static void UpdateLastName(Client client) //void
         {
-
+            HumaneSocietyDataContext context = new HumaneSocietyDataContext();
+            Client updateClientLastName = (from row in context.Clients where row.ID == client.ID select row).FirstOrDefault();
+            if (updateClientLastName != null)
+            {
+                updateClientLastName.lastName = client.lastName;
+                context.SubmitChanges();
+            }
         }
-
-      
 
         public static void Adopt(Animal animal, Client client)
         {
