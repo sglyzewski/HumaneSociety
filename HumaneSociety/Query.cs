@@ -589,11 +589,29 @@ namespace HumaneSociety
 
         public static Employee RetrieveEmployeeUser(string email, int employeeNumber) {
             HumaneSocietyDataContext context = new HumaneSocietyDataContext();
+            
+            bool employeeExists = context.Employees.Any(e => e.email == email && e.employeeNumber == employeeNumber);
+            if (employeeExists == false)
+            {
+                Employee employeeToAdd = new Employee();
+                employeeToAdd.email = email;
+                employeeToAdd.employeeNumber = employeeNumber;
+                context.Employees.InsertOnSubmit(employeeToAdd);
+                try
+                {
+                    context.SubmitChanges();
+                }
+                catch (Exception e)
+                {
+                    Console.WriteLine(e);
+                }
+            }
+            
             var employee = (from e in context.Employees where (e.email == email) && e.employeeNumber == employeeNumber select e).FirstOrDefault();
             return employee;
         } //Employee
 
-        public static void AddUsernameAndPassword(Employee employee, string userName, string password)  //??????????
+        public static void AddUsernameAndPassword(Employee employee, string userName, string password)  
         {
             HumaneSocietyDataContext context = new HumaneSocietyDataContext();
             var employeeRecord = (from e in context.Employees where e.ID == employee.ID select e).FirstOrDefault();
@@ -626,12 +644,9 @@ namespace HumaneSociety
         public static List<string[]> ConvertCSVtoList(string filename)
         {
             HumaneSocietyDataContext context = new HumaneSocietyDataContext();
-            //https://docs.microsoft.com/en-us/dotnet/csharp/programming-guide/concepts/linq/how-to-compute-column-values-in-a-csv-text-file-linq
+            
             var stuffToAdd = File.ReadAllLines(filename);
-            //from line in stuffToAdd
-            //let elements = line.Split(',').Select(lines);
-
-            //int dataRowStart = 0;
+           
             List<string[]> data = new List<string[]>();
             for(int i = 0; i<stuffToAdd.Length-1; i++)
             {
@@ -639,7 +654,6 @@ namespace HumaneSociety
                 string[] values = line.Split(',');
                 data.Add(values);
             }
-
             return data;
                  
         }
