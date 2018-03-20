@@ -38,43 +38,103 @@ namespace HumaneSociety
 
         public static void RemoveAnimal(Animal animal) //void
         {
-
+            HumaneSocietyDataContext context = new HumaneSocietyDataContext();
+            Animal animalToBeRemoved = (from row in context.Animals where row.ID == animal.ID select row).FirstOrDefault();
+            if (animalToBeRemoved != null)
+            {
+                context.Animals.DeleteOnSubmit(animalToBeRemoved);
+                context.SubmitChanges();
+            }
         }
 
-        public static void AddNewClient(string firstName, string lastName, string username, string password, string email, string streetAddress, int zipCode, int state) //void
+        public static void AddNewClient(string firstName, string lastName, string username, string password, string email, int userAddressId) //void
         {
+            HumaneSocietyDataContext context = new HumaneSocietyDataContext();
+            Client client = new Client();
+            client.firstName = firstName;
+            client.lastName = lastName;
+            client.userName = username;
+            client.pass = password;
+            client.email = email;
+             
 
-        }
-        public static void UpdateClient(Client client) //void
-        {
-
+            UserAddress addClientZipCode = (from row in context.UserAddresses where row.ID == userAddressId select row).FirstOrDefault();
+            if (addClientZipCode == null)
+            {
+                addClientZipCode.zipcode = userAddressId;
+                context.SubmitChanges();
+            }
+            USState addClientState = (from row in context.USStates where row.ID == userAddressId select row).FirstOrDefault();
+            if (addClientState == null)
+            {
+                addClientState. = client.userAddress;
+                context.SubmitChanges();
+            }
+            client.userAddress = userAddressId; //forign key which points to primary key
         }
 
         public static void UpdateUsername(Client client) //void
         {
+            HumaneSocietyDataContext context = new HumaneSocietyDataContext();
+            Client updateclientUsername = (from row in context.Clients where row.ID == client.ID select row).FirstOrDefault();
+            if (updateclientUsername != null)
+            {
+                updateclientUsername.userName = client.userName;
+                context.SubmitChanges();
+            }
 
         }
         public static void UpdateEmail(Client client) //void
         {
-
+            HumaneSocietyDataContext context = new HumaneSocietyDataContext();
+            Client updateClientEmail = (from row in context.Clients where row.ID == client.ID select row).FirstOrDefault();
+            if (updateClientEmail != null)
+            {
+                updateClientEmail.email = client.email;
+                context.SubmitChanges();
+            }
         }
         public static void UpdateAddress(Client client) //void
         {
-
+            HumaneSocietyDataContext context = new HumaneSocietyDataContext();
+            Client updateClientAddress = (from row in context.Clients where row.ID == client.ID select row).FirstOrDefault();
+            if (updateClientAddress != null)
+            {
+                updateClientAddress.userAddress = client.userAddress;
+                context.SubmitChanges();
+            }
         }
         public static void UpdateFirstName(Client client) //void
         {
-
+            HumaneSocietyDataContext context = new HumaneSocietyDataContext();
+            Client updateClientFirstName = (from row in context.Clients where row.ID == client.ID select row).FirstOrDefault();
+                if (updateClientFirstName != null)
+                {
+                    updateClientFirstName.firstName = client.firstName;
+                    context.SubmitChanges();
+                }
         }
 
         public static void UpdateLastName(Client client) //void
         {
-
+            HumaneSocietyDataContext context = new HumaneSocietyDataContext();
+            Client updateClientLastName = (from row in context.Clients where row.ID == client.ID select row).FirstOrDefault();
+            if (updateClientLastName != null)
+            {
+                updateClientLastName.lastName = client.lastName;
+                context.SubmitChanges();
+            }
         }
 
         public static void GetPendingAdoptions() //var adoptions
         {
+            HumaneSocietyDataContext context = new HumaneSocietyDataContext();
+            var getPendingAdoptions = (from row in context.ClientAnimalJunctions where row.approvalStatus == "pending" select row).FirstOrDefault();
+            if (getPendingAdoptions != null)
+            {
+                getPendingAdoptions.approvalStatus = 
 
+            }
         }
 
         public static void Adopt(Animal animal, Client client)
