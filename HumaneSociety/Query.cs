@@ -428,7 +428,18 @@ namespace HumaneSociety
             var location = (from r in context.Rooms where name == r.name && building == r.building select r.ID).FirstOrDefault();
             return location;
         } //System.Nullable<int> animal.location
-        public static void AddAnimal(Animal animal) { } //void
+        public static void AddAnimal(Animal animal) {
+            HumaneSocietyDataContext context = new HumaneSocietyDataContext();
+            context.Animals.InsertOnSubmit(animal);
+            try
+            {
+                context.SubmitChanges();
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+            }
+        } //void
 
         public static Employee EmployeeLogin(string username, string password) {
             HumaneSocietyDataContext context = new HumaneSocietyDataContext();
