@@ -35,27 +35,61 @@ namespace HumaneSociety
             context.SubmitChanges();
         }
 
+        public static int GetCategoryKey(string species)
+        {
+            HumaneSocietyDataContext context = new HumaneSocietyDataContext();
+            var catagoryID = (from c in context.Catagories where c.catagory1 == species select c.ID).FirstOrDefault();
+            if (catagoryID < 0)
+            {
+                Catagory catagory = new Catagory();
+                catagory.catagory1 = species;
+                context.Catagories.InsertOnSubmit(catagory);
+
+                try
+                {
+                    context.SubmitChanges();
+                }
+                catch (Exception e)
+                {
+                    Console.WriteLine(e);
+                }
+                return catagory.ID;
+            }
+            return catagoryID;
+        }
+
         public static void EnterUpdate(Animal animal, Dictionary<int, string> updates) //void
         {
             HumaneSocietyDataContext context = new HumaneSocietyDataContext();
-            string species;
+            string species ="";
             updates.TryGetValue(1, out species);
-            string breed;
+            string breed ="";
             updates.TryGetValue(2, out breed);
-            string name;
+            string name="";
             updates.TryGetValue(3, out name);
-            string age;
+            string age="";
             updates.TryGetValue(4, out age);
-            string demeanor;
+            string demeanor="";
             updates.TryGetValue(5, out demeanor);
-            string kidFriendly;
+            string kidFriendly="";
             updates.TryGetValue(6, out kidFriendly);
-            string petFriendly;
+            string petFriendly="";
             updates.TryGetValue(7, out petFriendly);
-            string weight;
+            string weight = "";
             updates.TryGetValue(8, out weight);
 
-            var categoryUpdateKey = GetSpecies(species);
+            if (species != "")
+            {
+                var catagoryID = GetCategoryKey(species);
+                var animalBreed = (from b in context.Breeds where b.catagory == catagoryID select b.ID).FirstOrDefault();
+                if (animalBreed == null)
+                {
+                    
+                }
+                animal.breed = animalBreed;
+                context.SubmitChanges();
+            }
+
 
         }
 
