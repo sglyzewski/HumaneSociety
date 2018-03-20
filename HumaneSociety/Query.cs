@@ -12,20 +12,50 @@ namespace HumaneSociety
 
         public static void UpdateAdoption(bool success, ClientAnimalJunction clientAnimalJunction) //void
         {
-
+            HumaneSocietyDataContext context = new HumaneSocietyDataContext();
+            
+            if (success == true)
+            {
+                clientAnimalJunction.approvalStatus = "approved";
+                context.SubmitChanges();
+            }
+            if(success == false)
+            {
+                clientAnimalJunction.approvalStatus = "rejected";
+                context.SubmitChanges();
+            }
         }
 
         public static void UpdateShot(string typeOfShot, Animal animal) //void
         {
             HumaneSocietyDataContext context = new HumaneSocietyDataContext();
-            var animalShotID = (from a in context.AnimalShotJunctions where a.Animal_ID == animal.ID select a.Shot_ID).First();
-            Shot shotResult = (from s in context.Shots where s.ID == animalShotID select s).First();
+            var animalShotID = (from a in context.AnimalShotJunctions where a.Animal_ID == animal.ID select a.Shot_ID).FirstOrDefault();
+            Shot shotResult = (from s in context.Shots where s.ID == animalShotID select s).FirstOrDefault();
             shotResult.name = typeOfShot;
             context.SubmitChanges();
         }
 
         public static void EnterUpdate(Animal animal, Dictionary<int, string> updates) //void
         {
+            HumaneSocietyDataContext context = new HumaneSocietyDataContext();
+            string species;
+            updates.TryGetValue(1, out species);
+            string breed;
+            updates.TryGetValue(2, out breed);
+            string name;
+            updates.TryGetValue(3, out name);
+            string age;
+            updates.TryGetValue(4, out age);
+            string demeanor;
+            updates.TryGetValue(5, out demeanor);
+            string kidFriendly;
+            updates.TryGetValue(6, out kidFriendly);
+            string petFriendly;
+            updates.TryGetValue(7, out petFriendly);
+            string weight;
+            updates.TryGetValue(8, out weight);
+
+            var categoryUpdateKey = GetSpecies(species);
 
         }
 
@@ -135,22 +165,38 @@ namespace HumaneSociety
             return clients;
         } // var clients
 
-        public static int GetBreed(Animal animal) {
+        public static int GetBreed() {
             HumaneSocietyDataContext context = new HumaneSocietyDataContext();
-            var breed = (from b in context.Breeds where animal.breed == b.ID select b.ID).FirstOrDefault();
-            return breed;
+            string breedString = UserInterface.GetStringData("breed", "the animal's");
+            string species = UserInterface.GetStringData("species", "the animal's");
+            int catagoryID = GetSpecies(species);
+            var breedKey = (from b in context.Breeds where breedString == b.breed1 && catagoryID == b.catagory select b.ID).FirstOrDefault();
+            return breedKey;
+
         } //System.Nullable<int> animal.breed 
 
-
-        public static int GetDiet(Animal animal) {
+        public static int GetSpecies(string catagory)
+        {
             HumaneSocietyDataContext context = new HumaneSocietyDataContext();
-            var diet = (from d in context.DietPlans where animal.diet == d.ID select d.ID).FirstOrDefault();
+            
+            var catagoryID = (from c in context.Catagories where catagory == c.catagory1  select c.ID).FirstOrDefault();
+            return catagoryID;
+
+        }
+
+        public static int GetDiet() {
+            HumaneSocietyDataContext context = new HumaneSocietyDataContext();
+            string food= UserInterface.GetStringData("food", "the animal's");
+            int amount = UserInterface.GetIntegerData("food amount", "the animal's");
+            var diet = (from d in context.DietPlans where food == d.food && amount == d.amount select d.ID).FirstOrDefault();
             return diet;
         } //System.Nullable<int> animal.diet
 
-        public static int GetLocation(Animal animal) {
+        public static int GetLocation() {
             HumaneSocietyDataContext context = new HumaneSocietyDataContext();
-            var location = (from r in context.Rooms where animal.location == r.ID select r.ID).FirstOrDefault();
+            string name = UserInterface.GetStringData("room name", "the animal's");
+            string building = UserInterface.GetStringData("building", "the animal's");
+            var location = (from r in context.Rooms where name == r.name && building == r.building select r.ID).FirstOrDefault();
             return location;
         } //System.Nullable<int> animal.location
         public static void AddAnimal(Animal animal) { } //void
