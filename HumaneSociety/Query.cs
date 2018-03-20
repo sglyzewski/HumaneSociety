@@ -292,9 +292,14 @@ namespace HumaneSociety
             context.SubmitChanges();
         }
 
-        public static int GetClientAddressKey(string streetAddress, int zipCode, object state)
+        public static int GetClientAddressKey(string streetAddress, int zipCode, int state)
         {
             HumaneSocietyDataContext context = new HumaneSocietyDataContext();
+            var stateToUpdate = (from row in context.USStates where row.ID == state select row).FirstOrDefault();
+            if(stateToUpdate != null)
+            {
+
+            }
             int addressNumber;
             var clientAddress = from row in context.UserAddresses where row.addessLine1 == streetAddress && row.zipcode == zipCode && row.USState == state select row.ID;
             if (clientAddress.ToList().Count > 0)
@@ -303,13 +308,13 @@ namespace HumaneSociety
             }
             else
             {
-                UserAddress address = new UserAddress();
-                address.zipcode = zipCode;
-                address.addessLine1 = streetAddress;
-                address.USState = state;
-                context.UserAddresses.InsertOnSubmit(address);
+                UserAddress userAddress = new UserAddress();
+                userAddress.zipcode = zipCode;
+                userAddress.addessLine1 = streetAddress;
+                userAddress.USState = state;
+                context.UserAddresses.InsertOnSubmit(userAddress);
                 context.SubmitChanges();
-                var addressKey = from row in context.UserAddresses where row.addessLine1 == streetAddress && row.zipcode == zipCode && row.USState == state select address.ID;
+                var addressKey = from row in context.UserAddresses where row.addessLine1 == streetAddress && row.zipcode == zipCode && row.USState == state select userAddress.ID;
                 addressNumber = addressKey.ToList()[0];
             }
             return addressNumber;
