@@ -39,13 +39,46 @@ namespace HumaneSociety
            
         }
 
+
+        public static int GetShotID(string name)
+        {
+            HumaneSocietyDataContext context = new HumaneSocietyDataContext();
+            bool shotExists = context.Shots.Any(s => s.name == name);
+            if (shotExists == false)
+            {
+                Shot shotToAdd = new Shot();
+                shotToAdd.name = name;
+                context.Shots.InsertOnSubmit(shotToAdd);
+                try
+                {
+                    context.SubmitChanges();
+                }
+                catch (Exception e)
+                {
+                    Console.WriteLine(e);
+                }
+
+            }
+            var shotID = (from s in context.Shots where s.name == name select s.ID).FirstOrDefault();
+            return shotID;
+        }
         public static void UpdateShot(string typeOfShot, Animal animal) //void
         {
             HumaneSocietyDataContext context = new HumaneSocietyDataContext();
-            var animalShotID = (from a in context.AnimalShotJunctions where a.Animal_ID == animal.ID select a.Shot_ID).FirstOrDefault();
-            Shot shotResult = (from s in context.Shots where s.ID == animalShotID select s).FirstOrDefault();
-            shotResult.name = typeOfShot;
-            context.SubmitChanges();
+
+            AnimalShotJunction animalShotJunction = new AnimalShotJunction();
+            animalShotJunction.Animal_ID = animal.ID;
+            animalShotJunction.Shot_ID = GetShotID(typeOfShot);
+            context.AnimalShotJunctions.InsertOnSubmit(animalShotJunction);
+            
+            try
+            {
+                context.SubmitChanges();
+            }
+            catch(Exception e)
+            {
+                Console.WriteLine(e);
+            }
         }
 
         public static int GetCategoryKey(string species)
@@ -271,10 +304,10 @@ namespace HumaneSociety
 
         }
 
-        public static List<AnimalShotJunction> GetShots(Animal animal) //var shots ---List<string> shotInfo
+        public static IEnumerable<AnimalShotJunction> GetShots(Animal animal) //var shots ---List<string> shotInfo
         {
             HumaneSocietyDataContext context = new HumaneSocietyDataContext();
-            var shots = (from s in context.AnimalShotJunctions where s.Animal_ID == animal.ID select s).ToList();
+            var shots = (from j in context.AnimalShotJunctions where j.Animal_ID == animal.ID select j);
             return shots;
         }
 
