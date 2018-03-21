@@ -52,7 +52,8 @@ namespace HumaneSociety
                     RunUserMenus();
                     return;
                 case "5":
-                    Query.ImportCSVToDB("//Mac/Home/Desktop/Dev_Code_Camp/Day_41/HumaneSocietyStarter/HumaneSociety/animals.csv");
+                    string filename = UserInterface.GetStringData("filename (make sure you type the full path of its location on your computer)", "csv's");
+                    Query.ImportCSVToDB(filename);
                     RunUserMenus();
                     return;
                 default:
