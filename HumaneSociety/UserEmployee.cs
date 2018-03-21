@@ -52,7 +52,7 @@ namespace HumaneSociety
                     RunUserMenus();
                     return;
                 case "5":
-                    Query.ImportCSVToDB("animals.csv");
+                    Query.ImportCSVToDB("//Mac/Home/Desktop/Dev_Code_Camp/Day_41/HumaneSocietyStarter/HumaneSociety/animals.csv");
                     RunUserMenus();
                     return;
                 default:

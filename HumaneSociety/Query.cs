@@ -648,7 +648,7 @@ namespace HumaneSociety
             var stuffToAdd = File.ReadAllLines(filename);
            
             List<string[]> data = new List<string[]>();
-            for(int i = 0; i<stuffToAdd.Length-1; i++)
+            for(int i = 0; i<stuffToAdd.Length; i++)
             {
                 string line = stuffToAdd[i];
                 string[] values = line.Split(',');
