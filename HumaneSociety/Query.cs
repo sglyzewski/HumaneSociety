@@ -478,9 +478,94 @@ namespace HumaneSociety
 
         }
 
-        public static void RunEmployeeQueries(Employee employee, string update)
-        {
 
+        public static void RunEmployeeQueries(Employee employee, string crud)
+        {
+            PerfromCrudOperationOnEmployee performCrudDelegate;
+            switch (crud)
+            {
+                case "create":
+                    performCrudDelegate = CreateEmployee;
+                    performCrudDelegate(employee, crud);
+
+                    break;
+                case "update":
+                    performCrudDelegate = UpdateEmployee;
+                    performCrudDelegate(employee, crud);
+                    break;
+                case "delete":
+                    performCrudDelegate = UpdateEmployee;
+                    performCrudDelegate(employee, crud);
+                    break;
+                case "read":
+                    performCrudDelegate = ReadEmployee;
+                    performCrudDelegate(employee, crud);
+                    break;
+                default:
+                    break;
+
+            }
+        }
+
+
+        public delegate void PerfromCrudOperationOnEmployee(Employee employee, string crud);
+        
+        
+       
+        public static void UpdateEmployee(Employee employee, string update)
+        {
+            HumaneSocietyDataContext context = new HumaneSocietyDataContext();
+            var employeeRecord = (from e in context.Employees where e.ID == employee.ID select e).FirstOrDefault();
+           
+            try
+            {
+                context.SubmitChanges();
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+            }
+
+
+
+        }
+
+        public static void ReadEmployee(Employee employee, string read)
+        {
+            HumaneSocietyDataContext context = new HumaneSocietyDataContext();
+            var employeeRecord = (from e in context.Employees where e.ID == employee.ID select e).FirstOrDefault();
+            UserInterface.DisplayEmployeeInfo(employeeRecord);
+
+        }
+
+        public static void DeleteEmployee(Employee employee, string delete)
+        {
+            HumaneSocietyDataContext context = new HumaneSocietyDataContext();
+            var employeeRecord = (from e in context.Employees where e.ID == employee.ID select e).FirstOrDefault();
+            context.Employees.DeleteOnSubmit(employeeRecord);
+            try
+            {
+                context.SubmitChanges();
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+            }
+
+        }
+
+        public static void CreateEmployee(Employee employee, string create)
+        {
+            HumaneSocietyDataContext context = new HumaneSocietyDataContext();
+            context.Employees.InsertOnSubmit(employee);
+            try
+            {
+                context.SubmitChanges();
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+            }
         }
 
         public static Client GetClient(string userName, string password) //client
@@ -566,9 +651,6 @@ namespace HumaneSociety
 
         public static int GetSpecies(string catagory)
         {
-
-
-
             HumaneSocietyDataContext context = new HumaneSocietyDataContext();
             bool catagoryExists = context.Catagories.Any(c => c.catagory1 == catagory);
             if (catagoryExists == false)
