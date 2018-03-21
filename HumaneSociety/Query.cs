@@ -494,7 +494,7 @@ namespace HumaneSociety
                     performCrudDelegate(employee, crud);
                     break;
                 case "delete":
-                    performCrudDelegate = UpdateEmployee;
+                    performCrudDelegate = DeleteEmployee;
                     performCrudDelegate(employee, crud);
                     break;
                 case "read":
@@ -515,8 +515,14 @@ namespace HumaneSociety
         public static void UpdateEmployee(Employee employee, string update)
         {
             HumaneSocietyDataContext context = new HumaneSocietyDataContext();
-            var employeeRecord = (from e in context.Employees where e.ID == employee.ID select e).FirstOrDefault();
-           
+
+            int employeeNumber = int.Parse(UserInterface.GetStringData("employee number", "the employee's original"));
+            Employee employeetoUpdate = GetEmployeeByEmployeeNumber(employeeNumber);
+            var employeeInContext = (from e in context.Employees where employeetoUpdate.ID == e.ID select e).FirstOrDefault();
+            employeeInContext.email = employee.email;
+            employeeInContext.lastName = employee.lastName;
+            employeeInContext.employeeNumber = employee.employeeNumber;
+            employeeInContext.firsttName = employee.firsttName;
             try
             {
                 context.SubmitChanges();
@@ -736,6 +742,14 @@ namespace HumaneSociety
                 Console.WriteLine(e);
             }
         } //void
+
+
+        public static Employee GetEmployeeByEmployeeNumber(int employeeNumber)
+        {
+            HumaneSocietyDataContext context = new HumaneSocietyDataContext();
+            var employee = (from e in context.Employees where e.employeeNumber == employeeNumber select e).FirstOrDefault();
+            return employee;
+        }
 
         public static Employee EmployeeLogin(string username, string password) {
             HumaneSocietyDataContext context = new HumaneSocietyDataContext();

@@ -62,10 +62,11 @@ namespace HumaneSociety
 
         private void UpdateEmployee()
         {
+
             Employee employee = new Employee();
             employee.firsttName = UserInterface.GetStringData("first name", "the employee's");
             employee.lastName = UserInterface.GetStringData("last name", "the employee's");
-            employee.employeeNumber = int.Parse(UserInterface.GetStringData("employee number", "the employee's"));
+            employee.employeeNumber = int.Parse(UserInterface.GetStringData("employee number", "the employee's new"));
             employee.email = UserInterface.GetStringData("email", "the employee's");
             try
             {
@@ -84,8 +85,9 @@ namespace HumaneSociety
         {
             try
             {
-                Employee employee = new Employee();
-                employee.employeeNumber = int.Parse(UserInterface.GetStringData("employee number", "the employee's"));
+                
+                int employeeNumber = int.Parse(UserInterface.GetStringData("employee number", "the employee's"));
+                Employee employee = Query.GetEmployeeByEmployeeNumber(employeeNumber);
                 Query.RunEmployeeQueries(employee, "read");
             }
             catch
