@@ -547,7 +547,7 @@ namespace HumaneSociety
         public static void DeleteEmployee(Employee employee, string delete)
         {
             HumaneSocietyDataContext context = new HumaneSocietyDataContext();
-            var employeeRecord = (from e in context.Employees where e.ID == employee.ID select e).FirstOrDefault();
+            var employeeRecord = (from e in context.Employees where e.employeeNumber == employee.employeeNumber && e.lastName == employee.lastName select e).FirstOrDefault();
             context.Employees.DeleteOnSubmit(employeeRecord);
             try
             {
