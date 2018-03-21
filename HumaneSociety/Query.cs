@@ -536,18 +536,56 @@ namespace HumaneSociety
 
         public static int GetBreed() {
             HumaneSocietyDataContext context = new HumaneSocietyDataContext();
-            string breedString = UserInterface.GetStringData("breed", "the animal's");
+            string breed = UserInterface.GetStringData("breed", "the animal's");
             string species = UserInterface.GetStringData("species", "the animal's");
+            string pattern = UserInterface.GetStringData("pattern", "the animal's");
             int catagoryID = GetSpecies(species);
-            var breedKey = (from b in context.Breeds where breedString == b.breed1 && catagoryID == b.catagory select b.ID).FirstOrDefault();
+
+            bool breedExists = context.Breeds.Any(b => b.breed1 == breed && b.catagory == catagoryID && b.pattern == pattern);
+            if (breedExists == false)
+            {
+                Breed breedToAdd = new Breed();
+                breedToAdd.breed1 = breed;
+                breedToAdd.catagory = catagoryID;
+                breedToAdd.pattern = pattern;
+                context.Breeds.InsertOnSubmit(breedToAdd);
+                try
+                {
+                    context.SubmitChanges();
+                }
+                catch (Exception e)
+                {
+                    Console.WriteLine(e);
+                }
+
+            }
+            var breedKey = (from b in context.Breeds where breed == b.breed1 && catagoryID == b.catagory && b.pattern == pattern select b.ID).FirstOrDefault();
             return breedKey;
 
         } //System.Nullable<int> animal.breed 
 
         public static int GetSpecies(string catagory)
         {
+
+
+
             HumaneSocietyDataContext context = new HumaneSocietyDataContext();
-            
+            bool catagoryExists = context.Catagories.Any(c => c.catagory1 == catagory);
+            if (catagoryExists == false)
+            {
+                Catagory catagoryToAdd = new Catagory();
+                catagoryToAdd.catagory1 = catagory;
+                context.Catagories.InsertOnSubmit(catagoryToAdd);
+                try
+                {
+                    context.SubmitChanges();
+                }
+                catch (Exception e)
+                {
+                    Console.WriteLine(e);
+                }
+
+            }
             var catagoryID = (from c in context.Catagories where catagory == c.catagory1  select c.ID).FirstOrDefault();
             return catagoryID;
 
@@ -557,16 +595,52 @@ namespace HumaneSociety
             HumaneSocietyDataContext context = new HumaneSocietyDataContext();
             string food= UserInterface.GetStringData("food", "the animal's");
             int amount = UserInterface.GetIntegerData("food amount", "the animal's");
-            var diet = (from d in context.DietPlans where food == d.food && amount == d.amount select d.ID).FirstOrDefault();
-            return diet;
+
+            bool dietExists = context.DietPlans.Any(d => d.food == food && d.amount == amount);
+            if(dietExists == false)
+            {
+                DietPlan dietPlanToAdd = new DietPlan();
+                dietPlanToAdd.food = food;
+                dietPlanToAdd.amount = amount;
+                context.DietPlans.InsertOnSubmit(dietPlanToAdd);
+                try
+                {
+                    context.SubmitChanges();
+                }
+                catch (Exception e)
+                {
+                    Console.WriteLine(e);
+                }
+            }
+            var dietKey = (from d in context.DietPlans where food == d.food && amount == d.amount select d.ID).FirstOrDefault();
+            return dietKey;
+
+
         } //System.Nullable<int> animal.diet
 
         public static int GetLocation() {
             HumaneSocietyDataContext context = new HumaneSocietyDataContext();
             string name = UserInterface.GetStringData("room name", "the animal's");
             string building = UserInterface.GetStringData("building", "the animal's");
-            var location = (from r in context.Rooms where name == r.name && building == r.building select r.ID).FirstOrDefault();
-            return location;
+            bool locationExists = context.Rooms.Any(r => r.name == name && r.building == building);
+            if (locationExists == false)
+            {
+                Room roomToAdd = new Room();
+                roomToAdd.name = name;
+                roomToAdd.building = building;
+                context.Rooms.InsertOnSubmit(roomToAdd);
+                try
+                {
+                    context.SubmitChanges();
+                }
+                catch (Exception e)
+                {
+                    Console.WriteLine(e);
+                }
+
+            }
+            var roomID = (from r in context.Rooms where r.name == name && r.building==building select r.ID).FirstOrDefault();
+            return roomID;
         } //System.Nullable<int> animal.location
         public static void AddAnimal(Animal animal) {
             HumaneSocietyDataContext context = new HumaneSocietyDataContext();
