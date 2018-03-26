@@ -68,9 +68,10 @@ namespace HumaneSociety
 
             AnimalShotJunction animalShotJunction = new AnimalShotJunction();
             animalShotJunction.Animal_ID = animal.ID;
+            animalShotJunction.dateRecieved = DateTime.Now; 
             animalShotJunction.Shot_ID = GetShotID(typeOfShot);
             context.AnimalShotJunctions.InsertOnSubmit(animalShotJunction);
-            
+
             try
             {
                 context.SubmitChanges();

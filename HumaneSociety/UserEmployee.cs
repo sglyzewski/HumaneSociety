@@ -175,6 +175,7 @@ namespace HumaneSociety
                 if(UserInterface.GetBitData("Would you like to Update shots?"))
                 {
                     Query.UpdateShot("booster", animal);
+                    //CheckShots(animal);
                 }
             }
             else
